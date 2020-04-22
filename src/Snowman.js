@@ -7,6 +7,7 @@ import img3 from "./3.png";
 import img4 from "./4.png";
 import img5 from "./5.png";
 import img6 from "./6.png";
+import { randomWord, ENGLISH_WORDS } from "./words";
 
 function Snowman({ maxWrong, images, words }) {
   // console.log(maxWrong);
@@ -15,7 +16,8 @@ function Snowman({ maxWrong, images, words }) {
   const [nWrong, updateNWrong] = useState(0);
   const [guessed, updateGuessed] = useState(new Set());
   const [answer, updateAnswer] = useState(words[0]);
-
+  console.log(answer);
+  const isWinner = !guessedWord().includes("_") ? "hidden" : "";
   /** guessedWord: show current-state of word:
     if guessed letters are {a,p,e}, show "app_e" for "apple"
   */
@@ -52,13 +54,31 @@ function Snowman({ maxWrong, images, words }) {
     ));
   }
 
+  function handleRestart() {
+    updateNWrong(0);
+    updateGuessed(new Set());
+    updateAnswer(randomWord(ENGLISH_WORDS));
+  }
+
+  console.log(guessedWord());
   /** render: render game */
   return (
     <div className="Snowman">
       <img src={images[nWrong]} alt="Snowman Pic" />
       <p>Wrong Guesses: {nWrong}</p>
       <p className="Snowman-word">{guessedWord()}</p>
-      {nWrong === maxWrong ? <p>You Lose</p> : <p>{generateButtons()}</p>}
+      {!guessedWord().includes("_") ? <p>You Win</p> : null}
+      {nWrong === maxWrong ? (
+        <p>
+          You Lose <br /> Word Was: {words[0]}{" "}
+        </p>
+      ) : (
+        <p className={`${isWinner}`}>{generateButtons()}</p>
+      )}
+      {/* <form action="">
+        <button type="submit">Reset</button>
+      </form> */}
+      <button onClick={handleRestart}>Reset</button>
     </div>
   );
 }
@@ -66,7 +86,7 @@ function Snowman({ maxWrong, images, words }) {
 Snowman.defaultProps = {
   maxWrong: 6,
   images: [img0, img1, img2, img3, img4, img5, img6],
-  words: ["apple"],
+  words: [randomWord(ENGLISH_WORDS)],
 };
 
 export default Snowman;
